@@ -1,10 +1,13 @@
 // src/context/AuthContext.tsx
-import { createContext, useContext, useState, type ReactNode, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { extractRoleFromToken } from '../utils/jwt';
+import { jwtDecode } from 'jwt-decode';
 
 interface AuthContextType {
   token: string | null;
+  role: 'admin' | 'editor' | 'dealer' | null;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
@@ -14,16 +17,21 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+  const [role, setRole] = useState<'Admin' | 'Editor' | 'Dealer' | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Token varsa axios header'ına ekle
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       localStorage.setItem('token', token);
+
+      const decoded: any = jwtDecode(token);
+      const roleClaim = decoded.role || decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+      setRole(roleClaim || null);
     } else {
       delete axios.defaults.headers.common['Authorization'];
       localStorage.removeItem('token');
+      setRole(null);
     }
   }, [token]);
 
@@ -33,23 +41,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         username,
         password
       });
-      
-      const receivedToken = response.data.token; // API'nizin token dönüş yapısına göre ayarlayın
+
+      const receivedToken = response.data.token;
       setToken(receivedToken);
-      navigate('/'); // Giriş başarılıysa ana sayfaya yönlendir
+      setRole(extractRoleFromToken(receivedToken));
+      navigate('/');
     } catch (error) {
       console.error('Login error:', error);
-      throw error; // Hata yakalamak için
+      throw error;
     }
   };
 
   const logout = () => {
     setToken(null);
+    setRole(null);
     navigate('/login');
   };
 
-  const value = {
+  const value: AuthContextType = {
     token,
+    role,
     login,
     logout,
     isAuthenticated: !!token,

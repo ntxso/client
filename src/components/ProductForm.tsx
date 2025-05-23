@@ -1,11 +1,20 @@
-import { useState} from 'react'
+import { useEffect, useState } from 'react'
 import type { ChangeEvent, FormEvent } from 'react'
+import axios from 'axios'
+import categoriesData from '../data/categories.json' // yol projenize göre değişebilir
 
 interface Product {
   name: string
   description: string
   price: number
+  code: string
+  categoryId: number
   images: File[]
+}
+
+interface Category {
+  id: number
+  name: string
 }
 
 const ProductForm = () => {
@@ -13,16 +22,25 @@ const ProductForm = () => {
     name: '',
     description: '',
     price: 0,
+    code: '',
+    categoryId: 0,
     images: [],
   })
 
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [categories, setCategories] = useState<Category[]>([])
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  useEffect(() => {
+    // Kategorileri yükle (yerel JSON'dan)
+    setCategories(categoriesData)
+  }, [])
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setProduct(prev => ({
       ...prev,
-      [name]: name === 'price' ? parseFloat(value) : value,
+      [name]: name === 'price' || name === 'categoryId' ? Number(value) : value,
     }))
   }
 
@@ -31,22 +49,47 @@ const ProductForm = () => {
     if (files) {
       const fileArray = Array.from(files)
       setProduct(prev => ({ ...prev, images: fileArray }))
-
-      // Görsel önizleme
-      const previews = fileArray.map(file => URL.createObjectURL(file))
-      setImagePreviews(previews)
+      setImagePreviews(fileArray.map(file => URL.createObjectURL(file)))
     }
   }
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
+    setIsSubmitting(true)
 
-    // Geçici olarak sadece console'a yaz
-    console.log('Ürün:', product)
+    try {
+      const productResponse = await axios.post("https://localhost:7096/api/Products", {
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        code: product.code,
+        categoryId: product.categoryId
+      })
 
-    // TODO: API'ye gönderim / Cloudinary entegrasyonu
+      const productId = productResponse.data.id
 
-    alert('Ürün gönderildi (henüz backend bağlantısı yapılmadı)')
+      for (const image of product.images) {
+        const formData = new FormData()
+        formData.append("file", image)
+
+        await axios.post(
+          `https://localhost:7096/api/ProductImages/upload?productId=${productId}`,
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        )
+      }
+
+      alert("Ürün ve görseller yüklendi!")
+      setProduct({ name: '', description: '', price: 0, code: '', categoryId: 0, images: [] })
+      setImagePreviews([])
+    } catch (err) {
+      console.error("Gönderim hatası:", err)
+      alert("Hata oluştu.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -63,6 +106,36 @@ const ProductForm = () => {
           required
           className="w-full border p-2 rounded"
         />
+      </div>
+
+      <div>
+        <label className="block font-medium">Kod</label>
+        <input
+          type="text"
+          name="code"
+          value={product.code}
+          onChange={handleChange}
+          required
+          className="w-full border p-2 rounded"
+        />
+      </div>
+
+      <div>
+        <label className="block font-medium">Kategori</label>
+        <select
+          name="categoryId"
+          value={product.categoryId}
+          onChange={handleChange}
+          required
+          className="w-full border p-2 rounded"
+        >
+          <option value="">Kategori seçin</option>
+          {categories.map(cat => (
+            <option key={cat.id} value={cat.id}>
+              {cat.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div>
@@ -114,9 +187,10 @@ const ProductForm = () => {
 
       <button
         type="submit"
-        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+        disabled={isSubmitting}
+        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded disabled:opacity-50"
       >
-        Kaydet
+        {isSubmitting ? "Yükleniyor..." : "Kaydet"}
       </button>
     </form>
   )

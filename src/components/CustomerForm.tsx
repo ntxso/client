@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { ChangeEvent, FormEvent } from 'react'
+import axios from 'axios'
 
 interface Customer {
   name: string
@@ -10,7 +11,7 @@ interface Customer {
   notes: string
 }
 
-const CustomerForm = () => {
+const CustomerForm: React.FC = () => {
   const [customer, setCustomer] = useState<Customer>({
     name: '',
     title: '',
@@ -19,38 +20,52 @@ const CustomerForm = () => {
     balance: 0,
     notes: ''
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setCustomer(prev => ({
       ...prev,
-      [name]: name === 'balance' ? parseFloat(value) : value,
+      [name]: name === 'balance' ? parseFloat(value) : value
     }))
   }
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    
-    console.log('Müşteri:', customer)
-    alert('Müşteri bilgileri kaydedildi (henüz backend bağlantısı yapılmadı)')
-    
-    // Formu temizle
-    setCustomer({
-      name: '',
-      title: '',
-      phone: '',
-      address: '',
-      balance: 0,
-      notes: ''
-    })
+    setIsSubmitting(true)
+
+    try {
+      // API endpoint'inizi backend'e göre ayarlayın
+      const response = await axios.post(
+        'https://localhost:7096/api/Customers',
+        customer
+      )
+      console.log('Kaydedilen müşteri:', response.data)
+      alert('Müşteri bilgileri başarıyla kaydedildi!')
+
+      // Formu temizle
+      setCustomer({
+        name: '',
+        title: '',
+        phone: '',
+        address: '',
+        balance: 0,
+        notes: ''
+      })
+    } catch (error) {
+      console.error('Kayıt hatası:', error)
+      alert('Bir hata oluştu. Lütfen tekrar deneyin.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded shadow max-w-xl mx-auto mt-8">
+    <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded shadow max-w-lg mx-auto mt-8">
       <h2 className="text-xl font-bold mb-4">Yeni Müşteri Ekle</h2>
 
       <div>
-        <label className="block font-medium">Ad Soyad</label>
+        <label className="block font-medium">Adı Soyadı</label>
         <input
           type="text"
           name="name"
@@ -79,14 +94,14 @@ const CustomerForm = () => {
           name="phone"
           value={customer.phone}
           onChange={handleChange}
-          required
           className="w-full border p-2 rounded"
         />
       </div>
 
       <div>
         <label className="block font-medium">Adres</label>
-        <textarea
+        <input
+          type="text"
           name="address"
           value={customer.address}
           onChange={handleChange}
@@ -95,7 +110,7 @@ const CustomerForm = () => {
       </div>
 
       <div>
-        <label className="block font-medium">Bakiye (₺)</label>
+        <label className="block font-medium">Bakiye</label>
         <input
           type="number"
           name="balance"
@@ -117,9 +132,10 @@ const CustomerForm = () => {
 
       <button
         type="submit"
-        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+        disabled={isSubmitting}
+        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded disabled:opacity-50"
       >
-        Müşteriyi Kaydet
+        {isSubmitting ? 'Kayıt Ediliyor...' : 'Kaydet'}
       </button>
     </form>
   )

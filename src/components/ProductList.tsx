@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { getProducts } from '../services/ProductService';
 import { useAuth } from '../context/AuthContext'; // Auth context'iniz
 import type { Product } from '../models/Models';
+import { Link } from 'react-router-dom';
 
 interface ProductCardProps {
   product: Product;
@@ -10,20 +11,22 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product, isAuthenticated }: ProductCardProps) => (
-  <div className="border p-4 rounded shadow">
-    <h3 className="font-bold text-lg">{product.name}</h3>
-    <p>{product.description}</p>
-    {isAuthenticated && (
-      <p className="font-bold mt-2">Fiyat: ${product.price}</p>
-    )}
-    {product.images.length > 0 && (
-      <img 
-        src={product.images[0].imageUrl} 
-        alt={product.name}
-        className="mt-2 w-full h-32 object-contain"
-      />
-    )}
-  </div>
+  <Link to={`/products/${product.id}`} className="block">
+    <div className="border p-4 rounded shadow hover:shadow-lg transition">
+      <h3 className="font-bold text-lg text-blue-800">{product.name}</h3>
+      <p>{product.description}</p>
+      {isAuthenticated && (
+        <p className="font-bold mt-2">Fiyat: ${product.price}</p>
+      )}
+      {product.images.length > 0 && (
+        <img 
+          src={product.images[0].imageUrl} 
+          alt={product.name}
+          className="mt-2 w-full h-32 object-contain"
+        />
+      )}
+    </div>
+  </Link>
 );
 
 const ProductList = () => {

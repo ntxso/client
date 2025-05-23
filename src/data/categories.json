@@ -1,0 +1,17 @@
+[
+  { "id": 1, "name": "Telefon Kılıfı", "image": "telefon-kilifi.png" },
+  { "id": 2, "name": "Ekran Koruyucu", "image": "ekran-koruyucu.png" },
+  { "id": 3, "name": "Şarj Cihazı", "image": "sarj-cihazi.png" },
+  { "id": 1002, "name": "Kablo", "image": "kablo.webp" },
+  { "id": 1003, "name": "Kulaklık", "image": "kulaklik.png" },
+  { "id": 1004, "name": "Hoparlör", "image": "hoparlor.png" },
+  { "id": 1005, "name": "Telefon Tutucu", "image": "telefon-tutucu.png" },
+  { "id": 1006, "name": "Powerbank", "image": "powerbank.png" },
+  { "id": 1007, "name": "Batarya", "image": "batarya.png" },
+  { "id": 1008, "name": "Airpods Aksesuar", "image": "airpods.png" },
+  { "id": 1009, "name": "Tablet Aksesuar", "image": "tablet.png" },
+  { "id": 1010, "name": "Saat Aksesuar", "image": "saat.png" },
+  { "id": 1011, "name": "Bilgisayar Ürünleri", "image": "bilgisayar.png" },
+  { "id": 1012, "name": "Hafıza Ürünleri", "image": "hafiza.png" },
+  { "id": 1013, "name": "Diğer", "image": "diger.png" }
+]

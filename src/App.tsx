@@ -10,6 +10,8 @@ import ProductList from './components/ProductList'
 import LoginPage from './pages/Login'
 import NotFoundPage from './pages/NotFoundPage' // Ekstra: 404 sayfası
 import ProtectedRoutesWrapper from './components/ProtectedRoutesWrapper'
+import ProductDetail from './pages/ProductDertail'
+import BulkUpload from './pages/BulkUpload'
 
 function App() {
   return (
@@ -17,18 +19,20 @@ function App() {
       <div className="min-h-screen bg-gray-100 text-gray-800">
         <Navbar />
         <main className="p-4">
-          // App.tsx içinde Routes kısmı
+          {/* // App.tsx içinde Routes kısmı */}
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/login" element={<LoginPage />} />
-
+            <Route path="/products" element={<ProductList />} />
+            <Route path="/products/:id" element={<ProductDetail/>} />
             {/* Protected Routes */}
             <Route element={<ProtectedRoutesWrapper />}>
               <Route path="/new" element={<NewProduct />} />
               <Route path="/newcust" element={<CustomerForm />} />
-              <Route path="/products" element={<ProductList />} />
+               <Route path="/bulk-upload" element={<BulkUpload />} />
+
             </Route>
 
             {/* 404 Not Found */}
