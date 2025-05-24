@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom"; // EKLENDİ
 import categories from "../data/categories.json";
 
 type Category = {
@@ -12,7 +13,8 @@ const CategoryGrid: React.FC = () => {
     <div className="p-4">
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
         {categories.map((category: Category) => (
-          <div
+          <Link
+            to={`/products/categoryid/${category.id}`} // 🌟 Link buraya eklendi
             key={category.id}
             className="relative bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer group max-h-[220px]"
           >
@@ -29,7 +31,7 @@ const CategoryGrid: React.FC = () => {
                 </span>
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

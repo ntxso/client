@@ -18,6 +18,16 @@ export const getProducts = async (): Promise<Product[]> => {
   }
 };
 
+// Kategoriye göre ürün getirme
+export const getProductsCategoryId = async (id:number): Promise<Product[]> => {
+  try {
+    const response = await axios.get<Product[]>(`${API_BASE_URL}/Products/search?categoryId=${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Ürünler getirilirken hata oluştu:', error);
+    throw error;
+  }
+};
 // ID'ye göre tek ürün getirme
 export const getProductById = async (id: number): Promise<Product> => {
   try {

@@ -1,31 +1,71 @@
-// src/pages/ProductDetail.tsx
 import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  code: string;
-  price: number;
-  images: {
-    id: number;
-    imageUrl: string;
-  }[];
-}
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<Product | null>(null);
-  const { isAuthenticated } = useAuth();
+  const [newImages, setNewImages] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const { isAuthenticated, role } = useAuth(); // ← burası güncellendi
+
+  const isAdmin = role === 'Admin'; // ← büyük/küçük harf farkına dikkat!
+
+  const fetchProduct = async () => {
+    try {
+      const res = await axios.get(`https://localhost:7096/api/Products/${id}`);
+      setProduct(res.data);
+    } catch (err) {
+      console.error('Ürün alınamadı:', err);
+    }
+  };
 
   useEffect(() => {
-    axios.get(`https://localhost:7096/api/Products/${id}`)
-      .then(res => setProduct(res.data))
-      .catch(err => console.error('Ürün alınamadı:', err));
+    fetchProduct();
   }, [id]);
+
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const fileArray = Array.from(files);
+      setNewImages(fileArray);
+      setPreviewUrls(fileArray.map(file => URL.createObjectURL(file)));
+    }
+  };
+
+  const handleUpload = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!product) return;
+
+    setIsUploading(true);
+    try {
+      for (const image of newImages) {
+        const formData = new FormData();
+        formData.append('file', image);
+
+        await axios.post(
+          `https://localhost:7096/api/ProductImages/upload?productId=${product.id}`,
+          formData,
+          {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          }
+        );
+      }
+
+      alert('Görseller yüklendi!');
+      setNewImages([]);
+      setPreviewUrls([]);
+      fetchProduct();
+    } catch (err) {
+      console.error('Yükleme hatası:', err);
+      alert('Görsel yüklenirken hata oluştu.');
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   if (!product) return <p>Yükleniyor...</p>;
 
@@ -33,6 +73,7 @@ const ProductDetail = () => {
     <div className="p-4 max-w-3xl mx-auto">
       <h1 className="text-2xl font-bold mb-2">{product.name}</h1>
       <p className="text-gray-600 mb-2">Kod: {product.code}</p>
+
       <div className="flex gap-2 overflow-x-auto mb-4">
         {product.images.map(image => (
           <img
@@ -43,11 +84,45 @@ const ProductDetail = () => {
           />
         ))}
       </div>
+
       <p className="mb-4">{product.description}</p>
+
       {isAuthenticated && (
         <p className="text-lg font-semibold text-green-700">
           Fiyat: ₺{product.price.toFixed(2)}
         </p>
+      )}
+
+      {isAdmin && (
+        <form onSubmit={handleUpload} className="mt-6 border-t pt-4">
+          <h3 className="font-semibold mb-2">Yeni Görsel Ekle</h3>
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleImageChange}
+            className="mb-2"
+          />
+          {previewUrls.length > 0 && (
+            <div className="flex gap-2 mb-2">
+              {previewUrls.map((src, index) => (
+                <img
+                  key={index}
+                  src={src}
+                  alt={`preview-${index}`}
+                  className="w-24 h-24 object-cover border rounded"
+                />
+              ))}
+            </div>
+          )}
+          <button
+            type="submit"
+            disabled={isUploading}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded disabled:opacity-50"
+          >
+            {isUploading ? 'Yükleniyor...' : 'Görselleri Yükle'}
+          </button>
+        </form>
       )}
     </div>
   );

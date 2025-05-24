@@ -12,6 +12,7 @@ import NotFoundPage from './pages/NotFoundPage' // Ekstra: 404 sayfası
 import ProtectedRoutesWrapper from './components/ProtectedRoutesWrapper'
 import ProductDetail from './pages/ProductDertail'
 import BulkUpload from './pages/BulkUpload'
+import ProductsByCategory from './components/ProductsByCategory'
 
 function App() {
   return (
@@ -27,6 +28,8 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/products" element={<ProductList />} />
             <Route path="/products/:id" element={<ProductDetail/>} />
+            <Route path="/products/categoryid/:id" element={<ProductsByCategory />} />
+
             {/* Protected Routes */}
             <Route element={<ProtectedRoutesWrapper />}>
               <Route path="/new" element={<NewProduct />} />

@@ -13,5 +13,6 @@
   { "id": 1010, "name": "Saat Aksesuar", "image": "saat.png" },
   { "id": 1011, "name": "Bilgisayar Ürünleri", "image": "bilgisayar.png" },
   { "id": 1012, "name": "Hafıza Ürünleri", "image": "hafiza.png" },
-  { "id": 1013, "name": "Diğer", "image": "diger.png" }
+  { "id": 1013, "name": "Kablo Koruyucu", "image": "diger.png" },
+  { "id": 2002, "name": "Diğer", "image": "diger.png" }
 ]
