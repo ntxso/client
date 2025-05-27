@@ -1,15 +1,8 @@
-import { useState } from 'react'
-import type { ChangeEvent, FormEvent } from 'react'
-import axios from 'axios'
+import { useState } from 'react';
+import type { ChangeEvent, FormEvent } from 'react';
+import CustomerService from '../services/CustomerService';
+import type { Customer } from '../services/CustomerService';
 
-interface Customer {
-  name: string
-  title: string
-  phone: string
-  address: string
-  balance: number
-  notes: string
-}
 
 const CustomerForm: React.FC = () => {
   const [customer, setCustomer] = useState<Customer>({
@@ -18,7 +11,9 @@ const CustomerForm: React.FC = () => {
     phone: '',
     address: '',
     balance: 0,
-    notes: ''
+    notes: '',
+    taxOffice: '',
+    taxValue: ''
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -35,13 +30,9 @@ const CustomerForm: React.FC = () => {
     setIsSubmitting(true)
 
     try {
-      // API endpoint'inizi backend'e göre ayarlayın
-      const response = await axios.post(
-        'https://localhost:7096/api/Customers',
-        customer
-      )
-      console.log('Kaydedilen müşteri:', response.data)
-      alert('Müşteri bilgileri başarıyla kaydedildi!')
+      const savedCustomer = await CustomerService.createCustomer(customer);
+      console.log('Kaydedilen müşteri:', savedCustomer);
+      alert('Müşteri bilgileri başarıyla kaydedildi!');
 
       // Formu temizle
       setCustomer({
@@ -50,7 +41,9 @@ const CustomerForm: React.FC = () => {
         phone: '',
         address: '',
         balance: 0,
-        notes: ''
+        notes: '',
+        taxOffice: '',
+        taxValue: ''
       })
     } catch (error) {
       console.error('Kayıt hatası:', error)

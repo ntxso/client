@@ -22,7 +22,30 @@ export interface Product {
   barcode: string;
   categoryId: number;
   price: number;
+  buyingPrice: number;
   publish: number;
   category: Category;
   images: ProductImage[];
+}
+
+export interface DealerRegisterDto {
+  // Customer
+  name: string;
+  title: string;
+  phone: string;
+  address: string;
+  balance?: number; // optional; default 0
+  notes?: string;
+  taxOffice?: string;
+  taxValue?: string;
+
+  // User
+  username: string;
+  password: string;
+}
+
+export interface DealerRegisterResponse {
+  message: string;
+  customerId: number;
+  userId: number;
 }

@@ -13,6 +13,10 @@ import ProtectedRoutesWrapper from './components/ProtectedRoutesWrapper'
 import ProductDetail from './pages/ProductDertail'
 import BulkUpload from './pages/BulkUpload'
 import ProductsByCategory from './components/ProductsByCategory'
+import DealerRegisterPage from './pages/DealerRegister'
+import AdminPanel from './pages/AdminPanel'
+
+
 
 function App() {
   return (
@@ -27,14 +31,17 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/products" element={<ProductList />} />
-            <Route path="/products/:id" element={<ProductDetail/>} />
+            <Route path="/products/:id" element={<ProductDetail />} />
             <Route path="/products/categoryid/:id" element={<ProductsByCategory />} />
+            <Route path="/register" element={<DealerRegisterPage />} />
 
             {/* Protected Routes */}
             <Route element={<ProtectedRoutesWrapper />}>
               <Route path="/new" element={<NewProduct />} />
               <Route path="/newcust" element={<CustomerForm />} />
-               <Route path="/bulk-upload" element={<BulkUpload />} />
+              <Route path="/bulk-upload" element={<BulkUpload />} />
+              <Route path="/admin-panel" element={<AdminPanel />} />
+
 
             </Route>
 

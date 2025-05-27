@@ -1,7 +1,9 @@
+// src/components/ProductForm.tsx
+
 import { useEffect, useState } from 'react'
 import type { ChangeEvent, FormEvent } from 'react'
-import axios from 'axios'
-import categoriesData from '../data/categories.json' // yol projenize göre değişebilir
+import categoriesData from '../data/categories.json'
+import { addProduct, uploadProductImage } from '../services/ProductService'
 
 interface Product {
   name: string
@@ -32,7 +34,6 @@ const ProductForm = () => {
   const [categories, setCategories] = useState<Category[]>([])
 
   useEffect(() => {
-    // Kategorileri yükle (yerel JSON'dan)
     setCategories(categoriesData)
   }, [])
 
@@ -58,35 +59,24 @@ const ProductForm = () => {
     setIsSubmitting(true)
 
     try {
-      const productResponse = await axios.post("https://localhost:7096/api/Products", {
-        name: product.name,
-        description: product.description,
-        price: product.price,
-        code: product.code,
-        categoryId: product.categoryId
-      })
+      // Görselleri hariç tutarak ürünü kaydet
+      const { images, ...productData } = product
 
-      const productId = productResponse.data.id
+      const newProduct = await addProduct(productData)
 
-      for (const image of product.images) {
-        const formData = new FormData()
-        formData.append("file", image)
-
-        await axios.post(
-          `https://localhost:7096/api/ProductImages/upload?productId=${productId}`,
-          formData,
-          {
-            headers: { "Content-Type": "multipart/form-data" },
-          }
-        )
+      // Görselleri yükle
+      for (const image of images) {
+        await uploadProductImage(newProduct.id, image)
       }
 
-      alert("Ürün ve görseller yüklendi!")
+      alert('Ürün ve görseller başarıyla yüklendi.')
+
+      // Formu sıfırla
       setProduct({ name: '', description: '', price: 0, code: '', categoryId: 0, images: [] })
       setImagePreviews([])
-    } catch (err) {
-      console.error("Gönderim hatası:", err)
-      alert("Hata oluştu.")
+    } catch (error) {
+      console.error('Ürün gönderimi sırasında hata oluştu:', error)
+      alert('Ürün gönderimi sırasında bir hata oluştu.')
     } finally {
       setIsSubmitting(false)
     }
@@ -190,7 +180,7 @@ const ProductForm = () => {
         disabled={isSubmitting}
         className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded disabled:opacity-50"
       >
-        {isSubmitting ? "Yükleniyor..." : "Kaydet"}
+        {isSubmitting ? 'Yükleniyor...' : 'Kaydet'}
       </button>
     </form>
   )

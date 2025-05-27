@@ -1,7 +1,8 @@
 import { useParams } from 'react-router-dom';
-import { useEffect, useState, ChangeEvent, FormEvent } from 'react';
+import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import type { Product } from '../models/Models';
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -12,7 +13,7 @@ const ProductDetail = () => {
 
   const { isAuthenticated, role } = useAuth(); // ← burası güncellendi
 
-  const isAdmin = role === 'Admin'; // ← büyük/küçük harf farkına dikkat!
+  const isAdmin = role === 'admin'; // ← büyük/küçük harf farkına dikkat!
 
   const fetchProduct = async () => {
     try {

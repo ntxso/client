@@ -1,8 +1,8 @@
 const About = () => {
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-2">About Page</h2>
-      <p>This is the about page of your app.</p>
+      <h2 className="text-2xl font-semibold mb-2">Plus Aksesuar</h2>
+      <p>Telefon aksesuarları toptan satış mağazası</p>
     </div>
   )
 }

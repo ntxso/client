@@ -3,7 +3,7 @@ import axios from 'axios';
 import type { Product } from '../models/Models';
 
 // API base URL
-const API_BASE_URL = 'https://localhost:7096/api';
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}`;
 
 
 
@@ -66,6 +66,25 @@ export const deleteProduct = async (id: number): Promise<void> => {
     await axios.delete(`${API_BASE_URL}/Products/${id}`);
   } catch (error) {
     console.error(`Ürün silinirken hata oluştu (ID: ${id}):`, error);
+    throw error;
+  }
+};
+
+// Ürün resmi yükleme
+export const uploadProductImage = async (productId: number, imageFile: File): Promise<void> => {
+  const formData = new FormData();
+  formData.append('file', imageFile);
+
+  try {
+    await axios.post(
+      `${API_BASE_URL}/ProductImages/upload?productId=${productId}`,
+      formData,
+      {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      }
+    );
+  } catch (error) {
+    console.error('Resim yüklenirken hata:', error);
     throw error;
   }
 };

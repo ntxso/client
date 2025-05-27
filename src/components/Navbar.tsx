@@ -3,19 +3,23 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 const Navbar = () => {
-  const {role, isAuthenticated, logout } = useAuth()
+  const { role, isAuthenticated, logout } = useAuth()
 
   return (
     <nav className="bg-blue-600 text-white p-4 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex space-x-4">
           <Link to="/" className="hover:underline">Ana Sayfa</Link>
-          {role === 'Admin' && (<>
+          {role === 'admin' && (<>
             <Link to="/admin-panel">Yönetici Paneli</Link>
             <Link to="/bulk-upload">Excelden Ürün Yükle</Link>
           </>)}
           <Link to="/about" className="hover:underline">Hakkında</Link>
-          <Link to="/products" className="hover:underline">Ürünler</Link>
+          {/* <Link to="/products" className="hover:underline">Ürünler</Link> */}
+          {!isAuthenticated && (
+            <Link to="/register" className="hover:underline">Bayi Kayıt</Link>
+          )}
+         
           {isAuthenticated && (
             <>
               <Link to="/new" className="hover:underline">Yeni Ürün</Link>
