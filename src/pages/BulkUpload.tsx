@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 import axios from 'axios';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 interface Product {
     name: string;
@@ -39,7 +40,7 @@ const BulkUpload = () => {
         // console.log(products);
         try {
             for (const product of products) {
-                await axios.post('https://localhost:7096/api/Products', product);
+                await axios.post(`${API_BASE_URL}/Products`, product);
             }
             alert('Tüm ürünler başarıyla yüklendi!');
             setProducts([]);
