@@ -1,8 +1,8 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react';
-import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import type { Product } from '../models/Models';
+import { getProductById, uploadProductImage } from '../services/ProductService';
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -17,8 +17,8 @@ const ProductDetail = () => {
 
   const fetchProduct = async () => {
     try {
-      const res = await axios.get(`https://localhost:7096/api/Products/${id}`);
-      setProduct(res.data);
+      const res = await getProductById(Number(id));
+      setProduct(res);
     } catch (err) {
       console.error('Ürün alınamadı:', err);
     }
@@ -44,16 +44,7 @@ const ProductDetail = () => {
     setIsUploading(true);
     try {
       for (const image of newImages) {
-        const formData = new FormData();
-        formData.append('file', image);
-
-        await axios.post(
-          `https://localhost:7096/api/ProductImages/upload?productId=${product.id}`,
-          formData,
-          {
-            headers: { 'Content-Type': 'multipart/form-data' },
-          }
-        );
+        await uploadProductImage(product.id ?? 0, image);
       }
 
       alert('Görseller yüklendi!');
