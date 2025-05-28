@@ -20,7 +20,7 @@ const CategoryGrid: React.FC = () => {
           >
             <div className="aspect-square w-full max-h-[220px]">
               <img
-                src={`/src/assets/categories/${category.image}`}
+                src={`/images/categories/${category.image}`}
                 alt={category.name}
                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
               />

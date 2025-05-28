@@ -18,9 +18,9 @@ const ProductCard = ({ product, isAuthenticated }: ProductCardProps) => (
       {isAuthenticated && (
         <p className="font-bold mt-2">Fiyat: ${product.price}</p>
       )}
-      {product.images.length > 0 && (
-        <img 
-          src={product.images[0].imageUrl} 
+      {(product.images ?? []).length > 0 && (
+        <img
+          src={product.images?.[0].imageUrl}
           alt={product.name}
           className="mt-2 w-full h-32 object-contain"
         />
@@ -57,8 +57,8 @@ const ProductList = () => {
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {products.map((product) => (
-          <ProductCard 
-            key={product.id} 
+          <ProductCard
+            key={product.id}
             product={product}
             isAuthenticated={isAuthenticated}
           />

@@ -9,6 +9,9 @@ interface Product {
   name: string
   description: string
   price: number
+  buyingPrice?: number
+  publish?: number
+  barcode?: string
   code: string
   categoryId: number
   images: File[]
@@ -27,6 +30,9 @@ const ProductForm = () => {
     code: '',
     categoryId: 0,
     images: [],
+    barcode: '',
+    buyingPrice: 0,
+    publish: 0
   })
 
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
@@ -66,7 +72,7 @@ const ProductForm = () => {
 
       // Görselleri yükle
       for (const image of images) {
-        await uploadProductImage(newProduct.id, image)
+        await uploadProductImage(newProduct.id??0, image)
       }
 
       alert('Ürün ve görseller başarıyla yüklendi.')

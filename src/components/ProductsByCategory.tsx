@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import axios from "axios";
 import { useAuth } from "../context/AuthContext"; // kendi yoluna göre ayarla
 import { getProductsCategoryId } from "../services/ProductService";
 import type { Product } from '../models/Models';
@@ -50,8 +49,8 @@ const ProductsByCategory: React.FC = () => {
                         to={`/products/${product.id}`}
                         key={product.id}
                         className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition block"
-                    >{product.images.length > 0 && (<img
-                        src={product.images[0].imageUrl || "/placeholder.jpg"}
+                    >{(product.images??[]).length > 0 && (<img
+                        src={(product.images??[])[0].imageUrl || "/placeholder.jpg"}
                         alt={product.name}
                         className="w-full h-40 object-cover rounded mb-2"
                     />)}

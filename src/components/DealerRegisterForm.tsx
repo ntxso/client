@@ -1,7 +1,7 @@
 import { useState } from 'react';
 //import CustomerService, { DealerRegisterDto } from '@/services/CustomerService';
 import CustomerService from '../services/CustomerService';
-import type { DealerRegisterDto, DealerRegisterResponse } from '../models/Models';
+import type { DealerRegisterDto} from '../models/Models';
 import { useNavigate } from 'react-router-dom';
 
 export default function DealerRegisterForm() {

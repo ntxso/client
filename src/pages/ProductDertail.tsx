@@ -76,7 +76,7 @@ const ProductDetail = () => {
       <p className="text-gray-600 mb-2">Kod: {product.code}</p>
 
       <div className="flex gap-2 overflow-x-auto mb-4">
-        {product.images.map(image => (
+        {product.images?.map(image => (
           <img
             key={image.id}
             src={image.imageUrl}
@@ -90,7 +90,7 @@ const ProductDetail = () => {
 
       {isAuthenticated && (
         <p className="text-lg font-semibold text-green-700">
-          Fiyat: ₺{product.price.toFixed(2)}
+          Fiyat: ₺{product.price?.toFixed(2)}
         </p>
       )}
 
