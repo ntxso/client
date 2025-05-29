@@ -2,7 +2,8 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react';
 import { useAuth } from '../context/AuthContext';
 import type { Product } from '../models/Models';
-import { getProductById, uploadProductImage } from '../services/ProductService';
+import { Link } from 'react-router-dom';
+import { getProductById, uploadProductImage, deleteProductImage, deleteProduct } from '../services/ProductService';
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -36,7 +37,20 @@ const ProductDetail = () => {
       setPreviewUrls(fileArray.map(file => URL.createObjectURL(file)));
     }
   };
+  const handleDeleteImage = async (imageId: number) => {
+    const confirmed = window.confirm('Bu görseli silmek istediğinize emin misiniz?');
 
+    if (!confirmed) return;
+
+    try {
+      await deleteProductImage(imageId);
+      alert('Görsel silindi.');
+      fetchProduct(); // yeniden yükle
+    } catch (err) {
+      console.error('Silme hatası:', err);
+      alert('Görsel silinirken bir hata oluştu.');
+    }
+  };
   const handleUpload = async (e: FormEvent) => {
     e.preventDefault();
     if (!product) return;
@@ -68,20 +82,30 @@ const ProductDetail = () => {
 
       <div className="flex gap-2 overflow-x-auto mb-4">
         {product.images?.map(image => (
-          <img
-            key={image.id}
-            src={image.imageUrl}
-            alt="Ürün görseli"
-            className="w-32 h-32 object-cover rounded border"
-          />
+          <div key={image.id} className="relative">
+            <img
+              src={image.imageUrl}
+              alt="Ürün görseli"
+              className="w-32 h-32 object-cover rounded border"
+            />
+            {isAdmin && (
+              <button
+                onClick={() => handleDeleteImage(image.id ?? 0)}
+                className="absolute bottom-1 right-1 bg-red-600 text-white text-xs px-2 py-1 rounded hover:bg-red-700"
+              >
+                Sil
+              </button>
+            )}
+          </div>
         ))}
       </div>
+
 
       <p className="mb-4">{product.description}</p>
 
       {isAuthenticated && (
         <p className="text-lg font-semibold text-green-700">
-          Fiyat: ₺{product.price?.toFixed(2)}
+          Fiyat: ${product.price?.toFixed(2)}
         </p>
       )}
 
@@ -116,6 +140,37 @@ const ProductDetail = () => {
           </button>
         </form>
       )}
+
+      {isAdmin && (
+        <div className="mt-6 flex gap-4">
+          <Link
+            to={`/product/edit/${product.id}`}
+            className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md shadow-sm transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+            Düzenle
+          </Link>
+          <button
+            onClick={async () => {
+              const confirmed = window.confirm('Bu ürünü silmek istediğinizden emin misiniz?');
+              if (!confirmed) return;
+
+              try {
+                await deleteProduct(product.id ?? 0);
+                alert('Ürün silindi.');
+                // yönlendirme
+                window.location.href = '/admin/products'; // varsayılan admin ürün listesi
+              } catch (err) {
+                console.error('Ürün silme hatası:', err);
+                alert('Ürün silinirken hata oluştu.');
+              }
+            }}
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+          >
+            Ürünü Sil
+          </button>
+        </div>
+      )}
+
     </div>
   );
 };

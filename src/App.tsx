@@ -14,6 +14,7 @@ import BulkUpload from './pages/BulkUpload'
 import ProductsByCategory from './components/ProductsByCategory'
 import DealerRegisterPage from './pages/DealerRegister'
 import AdminPanel from './pages/AdminPanel'
+import ProductEdit from './pages/ProductEdit'
 
 
 
@@ -40,6 +41,8 @@ function App() {
               <Route path="/newcust" element={<CustomerForm />} />
               <Route path="/bulk-upload" element={<BulkUpload />} />
               <Route path="/admin-panel" element={<AdminPanel />} />
+              <Route path="/product/edit/:id" element={<ProductEdit />} />
+
 
 
             </Route>

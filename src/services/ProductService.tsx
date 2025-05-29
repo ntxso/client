@@ -6,6 +6,16 @@ import type { Product } from '../models/Models';
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}`;
 
 
+// ProductService.ts
+export const deleteProductImage = async (imageId: number) => {
+  // Resim silme işlemi için API çağrısı
+  try {
+    await axios.delete(`${API_BASE_URL}/ProductImages/${imageId}`);
+  } catch (error) {
+    console.error(`Ürün silinirken hata oluştu (ID: ${imageId}):`, error);
+    throw error;
+  }
+};
 
 // Tüm ürünleri getirme
 export const getProducts = async (): Promise<Product[]> => {
@@ -19,7 +29,7 @@ export const getProducts = async (): Promise<Product[]> => {
 };
 
 // Kategoriye göre ürün getirme
-export const getProductsCategoryId = async (id:number): Promise<Product[]> => {
+export const getProductsCategoryId = async (id: number): Promise<Product[]> => {
   try {
     const response = await axios.get<Product[]>(`${API_BASE_URL}/Products/search?categoryId=${id}`);
     return response.data;
@@ -69,6 +79,7 @@ export const deleteProduct = async (id: number): Promise<void> => {
     throw error;
   }
 };
+
 
 // Ürün resmi yükleme
 export const uploadProductImage = async (productId: number, imageFile: File): Promise<void> => {

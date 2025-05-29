@@ -7,6 +7,7 @@ export interface ProductImage {
   height?: number;
   fileSizeKb?: number;
   createdAt?: string;
+  publicId?: string; 
 }
 
 export interface Category {
