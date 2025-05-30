@@ -62,7 +62,7 @@ class CustomerService {
 
   async updateCustomer(id: string, customer: Customer): Promise<Customer> {
     try {
-      const response = await axios.put<Customer>(`${this.baseUrl}/${id}`, customer);
+      const response = await axios.post<Customer>(`${this.baseUrl}/Update/${id}`, customer);
       return response.data;
     } catch (error) {
       console.error(`Error updating customer with id ${id}:`, error);
@@ -72,7 +72,7 @@ class CustomerService {
 
   async deleteCustomer(id: string): Promise<void> {
     try {
-      await axios.delete(`${this.baseUrl}/${id}`);
+      await axios.post(`${this.baseUrl}/Delete/${id}`);
     } catch (error) {
       console.error(`Error deleting customer with id ${id}:`, error);
       throw error;

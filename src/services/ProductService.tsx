@@ -10,7 +10,7 @@ const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}`;
 export const deleteProductImage = async (imageId: number) => {
   // Resim silme işlemi için API çağrısı
   try {
-    await axios.delete(`${API_BASE_URL}/ProductImages/${imageId}`);
+    await axios.post(`${API_BASE_URL}/ProductImages/Delete/${imageId}`);
   } catch (error) {
     console.error(`Ürün silinirken hata oluştu (ID: ${imageId}):`, error);
     throw error;
@@ -63,7 +63,7 @@ export const addProduct = async (product: Omit<Product, 'id' | 'category' | 'ima
 // Ürün güncelleme
 export const updateProduct = async (id: number, product: Partial<Product>): Promise<void> => {
   try {
-    await axios.put(`${API_BASE_URL}/Products/${id}`, product);
+    await axios.post(`${API_BASE_URL}/Products/Update/${id}`, product);
   } catch (error) {
     console.error(`Ürün güncellenirken hata oluştu (ID: ${id}):`, error);
     throw error;
@@ -73,7 +73,7 @@ export const updateProduct = async (id: number, product: Partial<Product>): Prom
 // Ürün silme
 export const deleteProduct = async (id: number): Promise<void> => {
   try {
-    await axios.delete(`${API_BASE_URL}/Products/${id}`);
+    await axios.post(`${API_BASE_URL}/Products/Delete/${id}`);
   } catch (error) {
     console.error(`Ürün silinirken hata oluştu (ID: ${id}):`, error);
     throw error;

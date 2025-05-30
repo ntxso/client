@@ -80,13 +80,13 @@ const ProductDetail = () => {
       <h1 className="text-2xl font-bold mb-2">{product.name}</h1>
       <p className="text-gray-600 mb-2">Kod: {product.code}</p>
 
-      <div className="flex gap-2 overflow-x-auto mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
         {product.images?.map(image => (
           <div key={image.id} className="relative">
             <img
               src={image.imageUrl}
               alt="Ürün görseli"
-              className="w-32 h-32 object-cover rounded border"
+              className="object-cover w-full rounded border"
             />
             {isAdmin && (
               <button
@@ -158,7 +158,7 @@ const ProductDetail = () => {
                 await deleteProduct(product.id ?? 0);
                 alert('Ürün silindi.');
                 // yönlendirme
-                window.location.href = '/admin/products'; // varsayılan admin ürün listesi
+                window.location.href = '/'; // varsayılan admin ürün listesi
               } catch (err) {
                 console.error('Ürün silme hatası:', err);
                 alert('Ürün silinirken hata oluştu.');
