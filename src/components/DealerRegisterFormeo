@@ -1,0 +1,62 @@
+import { useState } from 'react';
+import CustomerService from '../services/CustomerService';
+import axios from 'axios';
+import { SalesType } from '../models/SalesType';
+
+export default function DealerRegisterFormeo() {
+  const [form, setForm] = useState({
+    name: '',
+    companyName: '',
+    phone: '',
+    cityId: 0,
+    districtId: 0,
+    address: '',
+    salesType: SalesType.None,
+    email: '',
+    password: '',
+    verificationCode: ''
+  });
+
+  const [codeSent, setCodeSent] = useState(false);
+  const [codeVerified, setCodeVerified] = useState(false);
+
+  const sendVerificationCode = async () => {
+    try {
+      await axios.post('/api/verification/send-verification-code', { email: form.email });
+      alert('Doğrulama kodu e-posta adresinize gönderildi.');
+      setCodeSent(true);
+    } catch (err) {
+      alert('Kod gönderilemedi.');
+    }
+  };
+
+  const verifyCode = async () => {
+    try {
+      await axios.post('/api/verification/verify-code', {
+        email: form.email,
+        code: form.verificationCode
+      });
+      setCodeVerified(true);
+      alert('E-posta doğrulandı.');
+    } catch (err) {
+      alert('Doğrulama kodu geçersiz.');
+    }
+  };
+
+  const register = async () => {
+    if (!codeVerified) {
+      alert('Lütfen önce e-posta adresinizi doğrulayın.');
+      return;
+    }
+
+    try {
+      const result = await CustomerService.registerDealer(form);
+      alert('Kayıt başarılı!');
+    } catch (err) {
+      alert('Kayıt sırasında hata oluştu.');
+    }
+  };
+
+ 
+    
+}

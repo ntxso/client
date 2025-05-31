@@ -82,10 +82,32 @@ class CustomerService {
   async registerDealer(data: DealerRegisterDto): Promise<DealerRegisterResponse> {
     try {
       const response = await axios.post<DealerRegisterResponse>(`${API_BASE_URL}/auth/register`, data);
-      return response.data;
+      return response.data; f
     } catch (error) {
+
       console.error('Error registering dealer:', error);
       throw error;
+    }
+  }
+
+  async sendVerificatioCode(email: string): Promise<void> {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/verification/send-verification-code`, { email: email, name: "testtt" })
+      console.log(JSON.stringify(response.data));
+      console.log(email)
+    } catch (error) {
+      console.error(error);
+      throw (error);
+    }
+  }
+
+  async verificationCode(email: string, code: string): Promise<void> {
+    try {
+      await axios.post(`${API_BASE_URL}/verification/verify-code`, { email: email, code: code })
+    }
+    catch (err) {
+      console.error(JSON.stringify(err))
+      throw (err)
     }
   }
 }

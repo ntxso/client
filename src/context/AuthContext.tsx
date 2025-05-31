@@ -60,10 +60,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [token]);
 
-  const login = async (username: string, password: string) => {
+  const login = async (email: string, password: string) => {
     try {
       const response = await axios.post(`${API_BASE_URL}/Auth/login`, {
-        username,
+        email,
         password
       });
 

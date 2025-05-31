@@ -1,3 +1,5 @@
+import type { SalesType } from "./SalesType";
+
 // Type tanımları
 export interface ProductImage {
   id?: number;
@@ -7,7 +9,7 @@ export interface ProductImage {
   height?: number;
   fileSizeKb?: number;
   createdAt?: string;
-  publicId?: string; 
+  publicId?: string;
 }
 
 export interface Category {
@@ -32,16 +34,15 @@ export interface Product {
 export interface DealerRegisterDto {
   // Customer
   name: string;
-  title: string;
+  companyName: string;
   phone: string;
+  cityId: number;
+  districtId: number;
   address: string;
-  balance?: number; // optional; default 0
-  notes?: string;
-  taxOffice?: string;
-  taxValue?: string;
+  salesType: SalesType;
+  verificationCode?: string;
 
-  // User
-  username: string;
+  email: string;
   password: string;
 }
 
@@ -52,10 +53,13 @@ export interface DealerRegisterResponse {
 }
 
 export interface User {
-  id?: number; 
-  username: string;
+  id?: number;
+  mail: string;
   role?: 'admin' | 'editor' | 'dealer';
   passwordHash: string;
   isActive?: boolean;
   customerId?: number; // optional for admin and editor
+  emailConfirmed?: boolean;
+  emailConfirmationToken?: string
 }
+
